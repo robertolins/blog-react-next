@@ -10,6 +10,7 @@
   "files.eol": "\n", // Final de linha sempre será LF
   "workbench.editor.labelFormat": "short",
   "editor.tabSize": 2,
+  "workbench.editor.enablePreview": false,
 
   "code-runner.clearPreviousOutput": true,
   "code-runner.ignoreSelection": true,
