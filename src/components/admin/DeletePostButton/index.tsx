@@ -1,11 +1,11 @@
 'use client';
 
 import { deletePostAction } from '@/actions/post/delete-post-action';
+import { Toast } from '@/adapters/Toast';
 import { Dialog } from '@/components/Dialog';
 import clsx from 'clsx';
 import { Trash2Icon } from 'lucide-react';
 import { useState, useTransition } from 'react';
-import { toast } from 'react-toastify';
 
 type DeletePostButtonProps = {
   id: string;
@@ -21,18 +21,18 @@ export function DeletePostButton({ id, title }: DeletePostButtonProps) {
   }
 
   function handleConfirm() {
-    toast.dismiss();
+    Toast.dismiss();
 
     startTransition(async () => {
       const result = await deletePostAction(id);
       setShowDialog(false);
 
       if (!result.success && result.error) {
-        toast.error(result.error);
+        Toast.error(result.error);
         return;
       }
 
-      toast.success('Post removido com sucesso!');
+      Toast.success('Post removido com sucesso!');
     });
   }
 
