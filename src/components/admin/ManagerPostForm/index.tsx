@@ -4,56 +4,104 @@ import { Button } from '@/components/Button';
 import { InputCheckbox } from '@/components/InputCheckbox';
 import { InputText } from '@/components/InputText';
 import { MarkdownEditor } from '@/components/MarkdownEditor';
-import { useState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { ImageUploader } from '../ImageUploader';
+import { makePartialPublicPost, PublicPostDTO } from '@/dto/post/dto';
+import { createPostAction } from '@/actions/post/create-post-action';
+import { Toast } from '@/adapters/Toast';
 
-export function ManagePostForm() {
-  const [contentValue, setContentValue] = useState('');
+type ManagePostFormProps = {
+  post?: PublicPostDTO;
+};
+
+export function ManagePostForm({ post }: ManagePostFormProps) {
+  const initialState = {
+    formState: makePartialPublicPost(post),
+    errors: [],
+  };
+  const [state, action, isPending] = useActionState(
+    createPostAction,
+    initialState,
+  );
+
+  useEffect(() => {
+    if (state.errors.length > 0) {
+      Toast.dismiss();
+      state.errors.forEach(error => Toast.error(error));
+    }
+  }, [state.errors]);
+
+  const { formState } = state;
+  const [contentValue, setContentValue] = useState(post?.content || '');
 
   return (
-    <form action='' className='mb-16'>
+    <form action={action} className='mb-16'>
       <div className='flex flex-col gap-6'>
         <InputText
-          labelText='Nome'
-          placeholder='Digite seu nome'
-          type='password'
+          labelText='ID'
+          name='id'
+          placeholder='ID gerado automaticamente'
+          type='text'
+          defaultValue={formState.id}
+          readOnly
+        />
+
+        <InputText
+          labelText='Slug'
+          name='slug'
+          placeholder='Slug gerada automaticamente'
+          type='text'
+          defaultValue={formState.slug}
+          readOnly
+        />
+
+        <InputText
+          labelText='Autor'
+          name='author'
+          placeholder='Digite o nome do autor'
+          type='text'
+          defaultValue={formState.author}
+        />
+
+        <InputText
+          labelText='Título'
+          name='title'
+          placeholder='Digite o título'
+          type='text'
+          defaultValue={formState.title}
+        />
+
+        <InputText
+          labelText='Excerto'
+          name='excerpt'
+          placeholder='Digite o resumo'
+          type='text'
+          defaultValue={formState.excerpt}
+        />
+
+        <MarkdownEditor
+          labelText='Conteúdo'
+          value={contentValue}
+          setValue={setContentValue}
+          textAreaName='content'
+          disabled={false}
         />
 
         <ImageUploader />
 
-        <InputText labelText='Sobrenome' placeholder='Digite seu sobrenome' />
-
-        <InputCheckbox labelText='Sobrenome' />
-
-        <MarkdownEditor
-          labelText='Conteúdo'
-          disabled={false}
-          textAreaName='content'
-          value={contentValue}
-          setValue={setContentValue}
+        <InputText
+          labelText='URL da imagem de capa'
+          name='coverImageUrl'
+          placeholder='Digite a url da imagem'
+          type='text'
+          defaultValue={formState.coverImageUrl}
         />
 
-        <InputText
-          disabled
-          labelText='Sobrenome'
-          placeholder='Digite seu sobrenome'
-          defaultValue='Olá mundo'
-        />
-        <InputText
-          disabled
-          labelText='Sobrenome'
-          placeholder='Digite seu sobrenome'
-        />
-        <InputText
-          labelText='Sobrenome'
-          placeholder='Digite seu sobrenome'
-          readOnly
-        />
-        <InputText
-          labelText='Sobrenome'
-          placeholder='Digite seu sobrenome'
-          defaultValue='Olá mundo'
-          readOnly
+        <InputCheckbox
+          labelText='Publicar?'
+          name='published'
+          type='checkbox'
+          defaultChecked={formState.published}
         />
 
         <div className='mt-4'>
