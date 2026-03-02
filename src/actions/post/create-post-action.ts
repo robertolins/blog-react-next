@@ -1,0 +1,69 @@
+'use server';
+
+import { makePartialPublicPost, PublicPostDTO } from '@/dto/post/dto';
+import { PostCreateSchema } from '@/lib/post/validations';
+import { PostModel } from '@/models/post/post-model';
+import { postRepository } from '@/repositories/post';
+import { makeSlugFromText } from '@/utils/make-slug-from-text';
+import { revalidateTag } from 'next/cache';
+import { redirect } from 'next/navigation';
+import { v4 as uuid } from 'uuid';
+
+type CreatePostActionState = {
+  formState: PublicPostDTO;
+  errors: string[];
+  success?: true;
+};
+
+export async function createPostAction(
+  prevState: CreatePostActionState,
+  formData: FormData,
+): Promise<CreatePostActionState> {
+  // TODO: verificar se o usuário tá logado
+
+  if (!(formData instanceof FormData)) {
+    return {
+      formState: prevState.formState,
+      errors: ['Dados inválidos'],
+    };
+  }
+
+  const formDataToObj = Object.fromEntries(formData.entries());
+  const zodParsedObj = PostCreateSchema.safeParse(formDataToObj);
+
+  if (!zodParsedObj.success) {
+    const errors = zodParsedObj.error.issues.map(issue => issue.message);
+    return {
+      errors,
+      formState: makePartialPublicPost(formDataToObj),
+    };
+  }
+
+  const validPostData = zodParsedObj.data;
+  const newPost: PostModel = {
+    ...validPostData,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    id: uuid(),
+    slug: makeSlugFromText(validPostData.title),
+  };
+
+  try {
+    await postRepository.create(newPost);
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      return {
+        formState: newPost,
+        errors: [e.message],
+      };
+    }
+
+    return {
+      formState: newPost,
+      errors: ['Erro desconhecido'],
+    };
+  }
+
+  revalidateTag('posts', 'max');
+  redirect(`/admin/post/${newPost.id}?created=1`);
+}
