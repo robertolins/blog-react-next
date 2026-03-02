@@ -1,11 +1,7 @@
 'use server';
 
-import { drizzleDb } from '@/db/drizzle';
-import { postsTable } from '@/db/drizzle/schemas';
 import { postRepository } from '@/repositories/post';
-import { asyncDelay } from '@/utils/async-delay';
 import { logColor } from '@/utils/log-color';
-import { eq } from 'drizzle-orm';
 import { revalidateTag } from 'next/cache';
 
 type PostActionResponse = {
@@ -18,7 +14,6 @@ export async function deletePostAction(
 ): Promise<PostActionResponse> {
   // TODO: checar login do usuário
 
-  await asyncDelay(200);
   logColor('' + id);
 
   if (!id || typeof id !== 'string') {
@@ -28,17 +23,22 @@ export async function deletePostAction(
     };
   }
 
-  const post = await postRepository.findById(id).catch(() => undefined);
+  let post;
+  try {
+    post = await postRepository.delete(id);
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      return {
+        success: false,
+        error: e.message,
+      };
+    }
 
-  if (!post) {
     return {
       success: false,
-      error: 'Nenhum post encontrado',
+      error: 'Erro desconhecido',
     };
   }
-
-  // TODO: mover este método para o repositório
-  await drizzleDb.delete(postsTable).where(eq(postsTable.id, id));
 
   // TODO: revalidateTag ou revalidatePath
   revalidateTag('posts', 'max');
