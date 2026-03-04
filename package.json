@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "next lint",
+    "migrate": "drizzle-kit migrate",
+    "seed": "tsx src/db/drizzle/seed.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.17.0",
