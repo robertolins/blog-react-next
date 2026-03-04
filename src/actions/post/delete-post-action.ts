@@ -1,5 +1,6 @@
 'use server';
 
+import { verifyLoginSession } from '@/lib/login/manage-login';
 import { postRepository } from '@/repositories/post';
 import { logColor } from '@/utils/log-color';
 import { revalidateTag } from 'next/cache';
@@ -12,7 +13,14 @@ type PostActionResponse = {
 export async function deletePostAction(
   id: string,
 ): Promise<PostActionResponse> {
-  // TODO: checar login do usuário
+  const isAuthenticated = await verifyLoginSession();
+
+  if (!isAuthenticated) {
+    return {
+      success: false,
+      error: 'Faça login novamente em outra aba',
+    };
+  }
 
   logColor('' + id);
 
