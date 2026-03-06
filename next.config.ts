@@ -19,6 +19,13 @@ const nextConfig: NextConfig = {
         pathname: '/**',
         search: '',
       },
+      {
+        protocol: 'https',
+        hostname: 'blog.rlimasistemas.com.br',
+        port: '',
+        pathname: '/**',
+        search: '',
+      },
     ],
   },
 };
