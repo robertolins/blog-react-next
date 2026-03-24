@@ -8,6 +8,7 @@ import {
 import { verifyLoginSession } from '@/lib/login/manage-login';
 import { PostUpdateSchema } from '@/lib/post/validations';
 import { postRepository } from '@/repositories/post';
+import { getZodErrorMessages } from '@/utils/get-zod-error-messages';
 import { revalidateTag } from 'next/cache';
 
 type UpdatePostActionState = {
@@ -51,9 +52,8 @@ export async function updatePostAction(
   }
 
   if (!zodParsedObj.success) {
-    const errors = zodParsedObj.error.issues.map(issue => issue.message);
     return {
-      errors,
+      errors: getZodErrorMessages(zodParsedObj),
       formState: makePartialPublicPost(formDataToObj),
     };
   }

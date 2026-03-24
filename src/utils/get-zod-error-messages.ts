@@ -1,11 +1,7 @@
-import { ZodError } from 'zod';
+import { ZodSafeParseError } from 'zod';
 
-export function getZodErrorMessages<T>(error: ZodError<T>): string[] {
-  return Object.values(error)
-    .map(field => {
-      if (Array.isArray(field)) return field;
-      return field?._errors || [];
-    })
-    .flat()
-    .filter(Boolean);
+export function getZodErrorMessages<T>({
+  error,
+}: ZodSafeParseError<T>): string[] {
+  return error.issues.map(issue => issue.message);
 }
