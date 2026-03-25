@@ -20,6 +20,13 @@ const nextConfig: NextConfig = {
         search: '',
       },
       {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '4000',
+        pathname: '/**',
+        search: '',
+      },
+      {
         protocol: 'https',
         hostname: 'blog.rlimasistemas.com.br',
         port: '',
