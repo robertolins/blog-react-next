@@ -2,13 +2,9 @@
 
 import { getLoginSessionForApi } from '@/lib/login/manage-login';
 import { authenticatedApiRequest } from '@/utils/authenticated-api-request';
-import { mkdir, writeFile } from 'fs/promises';
-import { extname, resolve } from 'path';
 
 const uploadMaxSize =
   Number(process.env.NEXT_PUBLIC_IMAGE_UPLOAD_MAX_SIZE) || 921600;
-const imageUploadDirectory = String(process.env.IMAGE_UPLOAD_DIRECTORY) || '';
-const imageServerUrl = String(process.env.IMAGE_SERVER_URL) || '';
 
 type UploadImageActionResult = {
   url: string;

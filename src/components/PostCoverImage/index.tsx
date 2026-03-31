@@ -31,6 +31,7 @@ export function PostCoverImage({ imageProps, linkProps }: PostCoverImageProps) {
           imageProps.className,
         )}
         alt={imageProps.alt}
+        unoptimized
       />
     </Link>
   );
