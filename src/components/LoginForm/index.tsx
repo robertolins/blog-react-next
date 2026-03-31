@@ -9,6 +9,7 @@ import { LogInIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useActionState, useEffect } from 'react';
+import { HoneypotInput } from '../HoneypotInput';
 
 export function LoginForm() {
   const initialState = {
@@ -63,6 +64,9 @@ export function LoginForm() {
         placeholder='Sua senha'
         disabled={isPending}
       />
+
+      <HoneypotInput />
+
       <Button type='submit' disabled={isPending} className='mt-4'>
         <LogInIcon />
         Entrar
