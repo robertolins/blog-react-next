@@ -4,6 +4,7 @@ import { Container } from '@/components/Container';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { ToastifyContainer } from '@/components/ToastifyContainer';
+import MenuHome from '@/components/MenuHome';
 
 export const metadata: Metadata = {
   title: {
@@ -22,6 +23,7 @@ export default function RootLayout({
     <html lang='pt-BR'>
       <body>
         <Container>
+          <MenuHome />
           <Header />
 
           {children}
